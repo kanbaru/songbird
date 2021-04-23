@@ -53,17 +53,19 @@ impl Metadata {
         let tags = format.and_then(|m| m.get("tags"));
 
         let title = tags
-            .and_then(|m| m.get("title"))
+            // matching here as not all songs have a lowercase "title" tag
+            // example: flac files have an uppercase "TITLE" flag.
+            .and_then(|m| m.get("title").or_else(|| m.get("TITLE")))
             .and_then(Value::as_str)
             .map(str::to_string);
 
         let artist = tags
-            .and_then(|m| m.get("artist"))
+        .and_then(|m| m.get("artist").or_else(|| m.get("ARTIST")))
             .and_then(Value::as_str)
             .map(str::to_string);
 
         let date = tags
-            .and_then(|m| m.get("date"))
+        .and_then(|m| m.get("date").or_else(|| m.get("DATE")))
             .and_then(Value::as_str)
             .map(str::to_string);
 
